@@ -105,7 +105,6 @@ namespace AdvancedConsoleLibrary.view
                 }
             }
         }
-
         public void ReturnResources()
         {
             List<User> users = new List<User>();
@@ -130,26 +129,8 @@ namespace AdvancedConsoleLibrary.view
                 {
                     userFound = true;
                     Console.WriteLine("User: " + user.Name);
-                    Console.WriteLine("Which book do you want to return?");
 
-                    int count = 0;
-
-                    foreach (var resource in user.Loans)
-                    {
-                        count++;
-                        Console.WriteLine($"ID: {count} | Title: {resource.Title}");
-                    }
-
-                    if (int.TryParse(Console.ReadLine(), out int selectedIndex) && selectedIndex > 0 && selectedIndex <= user.Loans.Count)
-                    {
-                        Resource selectedResource = user.Loans[selectedIndex - 1];
-                        user.Loans.Remove(selectedResource);
-                        Console.WriteLine("You have returned " + selectedResource.Title);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Invalid selection.");
-                    }
+                    user.ReturnResource();
 
                     break;
                 }
@@ -229,7 +210,7 @@ namespace AdvancedConsoleLibrary.view
                     List<Resource> studentResources = new List<Resource>();
                     Guid studentGuid = Guid.NewGuid();
                     User student = new Student(studentGuid, name, studentResources, cedula, studentId);
-                    studentResources.Add(selectedResource);
+                    student.LoanResource(selectedResource);
                     Console.WriteLine("Resource was loeaned succesfully!");
                     students[studentGuid] = (Student)student;
                     Console.WriteLine("The student was registered");
@@ -246,7 +227,7 @@ namespace AdvancedConsoleLibrary.view
                     List<Resource> professorResources = new List<Resource>();
                     Guid professorGuid = Guid.NewGuid();
                     User professor = new Professor(professorGuid, name, professorResources, cedula, professorId);
-                    professorResources.Add(selectedResource);
+                    professor.LoanResource(selectedResource);
                     Console.WriteLine("Resource was loeaned succesfully!");
                     professors[professorGuid] = (Professor)professor;
                     Console.WriteLine("The professor was registered");

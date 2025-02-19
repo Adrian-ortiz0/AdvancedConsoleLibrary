@@ -28,6 +28,8 @@ namespace AdvancedConsoleLibrary.view
                 Console.WriteLine();
                 Console.WriteLine("1. Loans");
                 Console.WriteLine("2. Returns");
+                Console.WriteLine("3. All Students");
+                Console.WriteLine("4. All Professors");
                 Console.WriteLine("0. Exit");
                 try
                 {
@@ -46,7 +48,13 @@ namespace AdvancedConsoleLibrary.view
                             LoansMenu(resources);
                             break;
                         case 2:
-                            Console.WriteLine("Loan a magazine");
+                            ReturnResources();
+                            break;
+                        case 3:
+                            AllStudents(students);
+                            break;
+                        case 4:
+                            AllProfessors(professors);
                             break;
                         default:
                             Console.WriteLine("Not valid option");
@@ -58,6 +66,76 @@ namespace AdvancedConsoleLibrary.view
                     Console.WriteLine($"{ex.Message} Incorrect value. Try again please!");
                 }
             }
+        }
+
+        public void ReturnResources()
+        {
+
+            List<User> users = new List<User>();
+            foreach(var student in students)
+            {
+                users.Add(student.Value);
+            }
+            foreach(var professor in professors)
+            {
+                users.Add(professor.Value);
+            }
+
+            Console.WriteLine("Type your cedula");
+            String cedula = Console.ReadLine();
+
+            foreach(var user in users)
+            {
+                if(user.Cedula.Equals(cedula))
+                {
+                    Console.WriteLine("User: " + user.Name);
+                    Console.WriteLine("Which book you want to return");
+
+                    foreach(var resource in user.Loans)
+                    {
+                       Console.WriteLine($"ID: {resource.Id} | Title: {resource.Title}");
+                    }
+
+                } else
+                {
+                    Console.WriteLine("User doesn't exists");
+
+                }
+            }
+            
+            
+        }
+
+        public void AllStudents(Dictionary<Guid, Student> students)
+        {
+
+            if (students.Count <= 0)
+            {
+                Console.WriteLine("There are no students");
+                return;
+            }
+
+            foreach (var student in students)
+            {
+                Console.WriteLine($"ID: {student.Key} | Name: {student.Value.Name} | Cedula: {student.Value.Cedula}");
+            }
+
+        }
+
+        public void AllProfessors(Dictionary<Guid, Professor> professors)
+        {
+
+            if (professors.Count <= 0)
+            {
+                Console.WriteLine("There are no professors");
+                return;
+            }
+
+            foreach (var professor in professors)
+            {
+                Console.WriteLine($"ID: {professor.Key} | Name: {professor.Value.Name} | Cedula: {professor.Value.Cedula}");
+            }
+
         }
 
         public void LoansMenu(List<Resource> resources)
@@ -78,7 +156,6 @@ namespace AdvancedConsoleLibrary.view
                 int selectedIndex = Convert.ToInt32(Console.ReadLine()) - 1;
                 Resource selectedResource = resources[selectedIndex];
                 Console.WriteLine("Resource " + resources[selectedIndex].Title + " was selected");
-
                 Console.WriteLine("Type your cedula");
                 String cedula = Console.ReadLine();
                 Console.WriteLine("Type your name");

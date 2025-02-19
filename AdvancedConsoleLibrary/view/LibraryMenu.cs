@@ -1,0 +1,137 @@
+﻿using AdvancedConsoleLibrary.model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AdvancedConsoleLibrary.view
+{
+    class LibraryMenu
+    {
+
+        public Dictionary<Guid, Student> students;
+        public Dictionary<Guid, Professor> professors;
+
+
+        public LibraryMenu(Dictionary<Guid, Student> students, Dictionary<Guid, Professor> professors)
+        {
+            this.students = students;
+            this.professors = professors;
+        }
+
+        public void Menu(List<Resource> resources)
+        {
+            while (true)
+            {
+                Console.WriteLine("Welcome to Adrian's Library!");
+                Console.WriteLine();
+                Console.WriteLine("1. Loans");
+                Console.WriteLine("2. Returns");
+                Console.WriteLine("0. Exit");
+                try
+                {
+
+                    int input = Convert.ToInt32(Console.ReadLine());
+
+                    if (input == 0)
+                    {
+                        Console.WriteLine("Closing");
+                        break;
+                    }
+
+                    switch (input)
+                    {
+                        case 1:
+                            LoansMenu(resources);
+                            break;
+                        case 2:
+                            Console.WriteLine("Loan a magazine");
+                            break;
+                        default:
+                            Console.WriteLine("Not valid option");
+                            break;
+                    }
+                }
+                catch (FormatException ex)
+                {
+                    Console.WriteLine($"{ex.Message} Incorrect value. Try again please!");
+                }
+            }
+        }
+
+        public void LoansMenu(List<Resource> resources)
+        {
+            Console.WriteLine("Type the name of the resource you want to loan");
+            String searchName = Console.ReadLine();
+            int count = 0;
+            foreach (var resource in resources)
+            {
+                if (!resource.Title.ToLower().Contains(searchName.ToLower()))
+                {
+                    continue;
+                }
+                count++;
+
+                Console.WriteLine(resource.Id + ". " + resource.Title);
+                Console.WriteLine("Select the resource you want");
+                int selectedIndex = Convert.ToInt32(Console.ReadLine()) - 1;
+                Resource selectedResource = resources[selectedIndex];
+                Console.WriteLine("Resource " + resources[selectedIndex].Title + " was selected");
+
+                Console.WriteLine("Type your cedula");
+                String cedula = Console.ReadLine();
+                Console.WriteLine("Type your name");
+                String name = Console.ReadLine();
+                Console.WriteLine("Are you a student or professor? (1. Student | 2.Professor)");
+                int typeUser = Convert.ToInt32(Console.ReadLine());
+                if (typeUser == 1)
+                {
+                    Console.WriteLine("Type your Student ID");
+                    String studentId = Console.ReadLine();
+                    if(studentId.Length < 10)
+                    {
+                        Console.WriteLine("The student id must contain 10 characters");
+                        return;
+                    }
+                    List<Resource> studentResources = new List<Resource>();
+                    Guid studentGuid = Guid.NewGuid();
+                    User student = new Student(studentGuid, name, studentResources, cedula, studentId);
+                    studentResources.Add(selectedResource);
+                    Console.WriteLine("Resource was loeaned succesfully!");
+                    students[studentGuid] = (Student)student;
+                    Console.WriteLine("The student was registered");
+                }
+                else if (typeUser == 2)
+                {
+                    Console.WriteLine("Type your Professor ID");
+                    String professorId = Console.ReadLine();
+                    if(professorId.Length < 5)
+                    {
+                        Console.WriteLine("The professor id must contain 5 characters");
+                        return;
+                    }
+                    List<Resource> professorResources = new List<Resource>();
+                    Guid professorGuid = Guid.NewGuid();
+                    User professor = new Professor(professorGuid, name, professorResources, cedula, professorId);
+                    professorResources.Add(selectedResource);
+                    Console.WriteLine("Resource was loeaned succesfully!");
+                    professors[professorGuid] = (Professor)professor;
+                    Console.WriteLine("The professor was registered");
+                } else
+                {
+                    Console.WriteLine("That command doesn't exists");
+                }
+
+            }
+            if (count == 0)
+            {
+                Console.WriteLine("The resource doesn't exists");
+            }
+
+        }
+
+
+    }
+    
+}

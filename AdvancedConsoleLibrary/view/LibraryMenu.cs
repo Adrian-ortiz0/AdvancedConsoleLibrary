@@ -1,4 +1,5 @@
 ﻿using AdvancedConsoleLibrary.model;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,7 @@ namespace AdvancedConsoleLibrary.view
                 Console.WriteLine("2. Returns");
                 Console.WriteLine("3. All Students");
                 Console.WriteLine("4. All Professors");
+                Console.WriteLine("5. All Personal resources");
                 Console.WriteLine("0. Exit");
                 try
                 {
@@ -56,6 +58,9 @@ namespace AdvancedConsoleLibrary.view
                         case 4:
                             AllProfessors(professors);
                             break;
+                        case 5:
+                            AllPersonalResources();
+                            break;
                         default:
                             Console.WriteLine("Not valid option");
                             break;
@@ -68,15 +73,14 @@ namespace AdvancedConsoleLibrary.view
             }
         }
 
-        public void ReturnResources()
+        public void AllPersonalResources()
         {
-
             List<User> users = new List<User>();
-            foreach(var student in students)
+            foreach (var student in students)
             {
                 users.Add(student.Value);
             }
-            foreach(var professor in professors)
+            foreach (var professor in professors)
             {
                 users.Add(professor.Value);
             }
@@ -84,26 +88,77 @@ namespace AdvancedConsoleLibrary.view
             Console.WriteLine("Type your cedula");
             String cedula = Console.ReadLine();
 
-            foreach(var user in users)
+            foreach (var user in users)
             {
-                if(user.Cedula.Equals(cedula))
+                if (user.Cedula.Equals(cedula))
                 {
                     Console.WriteLine("User: " + user.Name);
-                    Console.WriteLine("Which book you want to return");
+                    Console.WriteLine("Your loans");
 
-                    foreach(var resource in user.Loans)
-                    {
-                       Console.WriteLine($"ID: {resource.Id} | Title: {resource.Title}");
-                    }
+                    user.ListLoans();
 
-                } else
+                }
+                else
                 {
                     Console.WriteLine("User doesn't exists");
 
                 }
             }
-            
-            
+        }
+
+        public void ReturnResources()
+        {
+            List<User> users = new List<User>();
+
+            foreach (var student in students)
+            {
+                users.Add(student.Value);
+            }
+            foreach (var professor in professors)
+            {
+                users.Add(professor.Value);
+            }
+
+            Console.WriteLine("Type your cedula");
+            String cedula = Console.ReadLine();
+
+            bool userFound = false;
+
+            foreach (var user in users)
+            {
+                if (user.Cedula.Equals(cedula))
+                {
+                    userFound = true;
+                    Console.WriteLine("User: " + user.Name);
+                    Console.WriteLine("Which book do you want to return?");
+
+                    int count = 0;
+
+                    foreach (var resource in user.Loans)
+                    {
+                        count++;
+                        Console.WriteLine($"ID: {count} | Title: {resource.Title}");
+                    }
+
+                    if (int.TryParse(Console.ReadLine(), out int selectedIndex) && selectedIndex > 0 && selectedIndex <= user.Loans.Count)
+                    {
+                        Resource selectedResource = user.Loans[selectedIndex - 1];
+                        user.Loans.Remove(selectedResource);
+                        Console.WriteLine("You have returned " + selectedResource.Title);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid selection.");
+                    }
+
+                    break;
+                }
+            }
+
+            if (!userFound)
+            {
+                Console.WriteLine("User doesn't exist");
+            }
         }
 
         public void AllStudents(Dictionary<Guid, Student> students)
